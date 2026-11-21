@@ -1,5 +1,6 @@
 ---
 slug: failures-and-testing
+id: xnnavdabbygx
 type: challenge
 title: 'Lab 3: Failure Handling and Testing'
 teaser: A bad account number parks the transfer until a human fixes it with an Update.
@@ -27,28 +28,34 @@ notes:
 
     Fixing a bank account should get a reply, so this lab uses an Update.
 tabs:
-- title: Code Editor
+- id: o3aau6mdoi5k
+  title: Code Editor
   type: code
   hostname: workshop
   path: /root/workshop/go/lab3
-- title: Worker
+- id: rvbcsdpb45kf
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: 0aas77zmszz9
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: ngteyvry61zv
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /
   port: 8233
-- title: Solution
+- id: x6jijlp3jmmb
+  title: Solution
   type: code
   hostname: workshop
   path: /root/workshop/go/solution3
-- title: CLI
+- id: sg8m4n8fcmta
+  title: CLI
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go

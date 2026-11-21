@@ -1,9 +1,10 @@
 ---
 slug: hello-retries
+id: ctao8fanukbb
 type: challenge
 title: 'Lab 1: Hello Temporal, with Retries'
-teaser: Write a Workflow, an Activity and a Worker. The Activity fails twice, and the
-  greeting still arrives.
+teaser: Write a Workflow, an Activity and a Worker. The Activity fails twice, and
+  the greeting still arrives.
 notes:
 - type: text
   contents: |-
@@ -26,24 +27,29 @@ notes:
     The Solution tab has the finished code. `SOLUTION.md` in the lab folder
     has every snippet ready to paste. Copying is fine.
 tabs:
-- title: Code Editor
+- id: l59xgxnzjmab
+  title: Code Editor
   type: code
   hostname: workshop
   path: /root/workshop/go/lab1
-- title: Worker
+- id: ffzzbogig5cm
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: k1txxmzacplv
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: uhs8i2isaxkh
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /
   port: 8233
-- title: Solution
+- id: zsgkja3n3fwp
+  title: Solution
   type: code
   hostname: workshop
   path: /root/workshop/go/solution1

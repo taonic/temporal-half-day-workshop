@@ -1,5 +1,6 @@
 ---
 slug: human-in-the-loop
+id: p2glj19hmkhe
 type: challenge
 title: 'Lab 2: Human in the Loop'
 teaser: A transfer waits for a human to approve it, gives up after 30 seconds, and
@@ -26,28 +27,34 @@ notes:
     **Timer**: wait a set time, kept by the server. It still fires if every
     Worker is down.
 tabs:
-- title: Code Editor
+- id: 5dnj3jyism7t
+  title: Code Editor
   type: code
   hostname: workshop
   path: /root/workshop/go/lab2
-- title: Worker
+- id: 41jmfqpncsji
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: zjc9lxqvytni
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: 0cetlp4ioiig
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /
   port: 8233
-- title: Solution
+- id: uwehtexron6k
+  title: Solution
   type: code
   hostname: workshop
   path: /root/workshop/go/solution2
-- title: CLI
+- id: 3k1dr4mymztf
+  title: CLI
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
