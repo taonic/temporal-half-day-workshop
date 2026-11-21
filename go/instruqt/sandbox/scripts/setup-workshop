@@ -15,8 +15,9 @@
 #   3. Go toolchain
 #   4. Temporal CLI
 #   5. Go module download and build cache warm-up
-#   6. Environment for every shell
-#   7. Start the Temporal dev server
+#   6. code-server (the Code Editor tab), gopls and the Go extension
+#   7. Environment for every shell
+#   8. Start the Temporal dev server and code-server
 #
 # See ../../README.md for how to ship a change to this file.
 set -euo pipefail
@@ -30,6 +31,10 @@ GO_DIR="${WORKSHOP_DIR}/go"
 # Keep in step with the `toolchain` line in go/go.mod. Any release at or above
 # it works; GOTOOLCHAIN=local (step 3) stops Go from fetching a different one.
 GO_VERSION="1.24.13"
+# code-server is the Code Editor tab. gopls v0.20.0 is the newest that builds
+# with Go 1.24; later releases need a newer Go.
+CODE_SERVER_VERSION="4.144.0"
+GOPLS_VERSION="v0.20.0"
 
 log() { echo "==> $*"; }
 
@@ -98,18 +103,65 @@ log "Installing the Temporal CLI"
 curl -sSf https://temporal.download/cli.sh | sh
 ln -sf /root/.temporalio/bin/temporal /usr/local/bin/temporal
 
-# 5. Module download and build cache. Every lab links the same SDK, so
-#    compiling the solutions once puts the SDK and its dependencies in
-#    GOCACHE. The learner's first `go run` then compiles only their own
-#    package, in a second or two, instead of the whole dependency graph.
-#    Labs are skipped: they do not compile until their TODOs are done.
+# 5. Module download and build cache. Every page links the same SDK, so
+#    compiling each lab's finished code once puts the SDK and its
+#    dependencies in GOCACHE. The learner's first `go run` then compiles only
+#    their own package, in a second or two, instead of the whole dependency
+#    graph. Each challenge's setup script recreates its lab folder.
 log "Downloading Go modules and warming the build cache"
 cd "${GO_DIR}"
 go mod download
-go build ./solution...
-go test -count=1 ./solution3 >/dev/null
+for page in 1c 2c 3c; do
+    bash "${WORKSHOP_DIR}/shared/steps.sh" "${GO_DIR}" restore "${page}"
+    go build "./lab${page:0:1}/..."
+done
+go test -count=1 ./lab3 >/dev/null
+rm -rf lab1 lab2 lab3
 
-# 6. Environment for every shell.
+# 6. code-server, the Code Editor tab. Instruqt's built-in editor has no Go
+#    support, and whether it reloads a file changed on disk is undocumented;
+#    `apply` changes files on disk. VS Code reloads an open file that has no
+#    unsaved edits, so autosave stays on. Nothing reformats on save: a
+#    formatter could rewrite the region markers `apply` relies on. The Go
+#    welcome page, the AI chat panel and vulncheck (whose setting gopls
+#    v0.20 rejects with an error toast) are turned off.
+log "Installing code-server ${CODE_SERVER_VERSION}, gopls and the Go extension"
+curl -fsSL https://code-server.dev/install.sh | sh -s -- --version "${CODE_SERVER_VERSION}"
+GOBIN=/usr/local/bin go install "golang.org/x/tools/gopls@${GOPLS_VERSION}"
+code-server --install-extension golang.go@0.58.0
+mkdir -p /root/.local/share/code-server/User
+cat > /root/.local/share/code-server/User/settings.json << 'SETTINGS'
+{
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 500,
+  "editor.formatOnSave": false,
+  "[go]": {
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "never"
+    }
+  },
+  "go.showWelcome": false,
+  "go.toolsManagement.autoUpdate": false,
+  "go.toolsManagement.checkForUpdates": "off",
+  "go.survey.prompt": false,
+  "chat.disableAIFeatures": true,
+  "chat.commandCenter.enabled": false,
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "workbench.editor.enablePreview": false,
+  "security.workspace.trust.enabled": false,
+  "workbench.startupEditor": "none",
+  "workbench.tips.enabled": false,
+  "telemetry.telemetryLevel": "off",
+  "extensions.autoCheckUpdates": false,
+  "extensions.autoUpdate": false,
+  "update.mode": "none",
+  "workbench.colorTheme": "Default Dark Modern",
+  "go.diagnostic.vulncheck": "Off"
+}
+SETTINGS
+
+# 7. Environment for every shell. go/bin holds `apply` and `reset`.
 #    /etc/profile.d covers login shells and the /etc/bash.bashrc line covers
 #    interactive non-login shells, which is what Instruqt's terminal tabs
 #    open. Putting them only in /etc/bash.bashrc does not work: Ubuntu's
@@ -118,7 +170,7 @@ log "Writing shell environment"
 cat > /etc/profile.d/workshop.sh << EOF
 export TEMPORAL_ADDRESS="127.0.0.1:7233"
 export GOTOOLCHAIN=local
-export PATH="/usr/local/go/bin:/root/go/bin:\$PATH"
+export PATH="${GO_DIR}/bin:/usr/local/go/bin:/root/go/bin:\$PATH"
 EOF
 chmod 0644 /etc/profile.d/workshop.sh
 
@@ -132,7 +184,7 @@ cd ${GO_DIR} 2>/dev/null || true
 EOF
 fi
 
-# 7. Temporal dev server.
+# 8. Temporal dev server and code-server.
 log "Starting the Temporal dev server"
 nohup temporal server start-dev \
     --ip 0.0.0.0 \
@@ -154,5 +206,25 @@ if [ "${HEALTHY}" != true ]; then
     exit 1
 fi
 log "Temporal server healthy"
+
+nohup code-server \
+    --bind-addr 0.0.0.0:8080 \
+    --auth none \
+    --disable-telemetry \
+    --disable-update-check \
+    --disable-workspace-trust \
+    --disable-getting-started-override \
+    "${GO_DIR}" \
+    > /tmp/code-server.log 2>&1 &
+for _ in $(seq 1 30); do
+    curl -fs -o /dev/null http://127.0.0.1:8080/healthz && break
+    sleep 1
+done
+curl -fsS -o /dev/null http://127.0.0.1:8080/healthz || {
+    echo "ERROR: code-server did not start. See /tmp/code-server.log." >&2
+    tail -20 /tmp/code-server.log >&2 || true
+    exit 1
+}
+log "code-server healthy"
 
 log "Sandbox provisioning complete."

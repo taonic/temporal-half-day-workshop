@@ -1,10 +1,11 @@
 # Workshop Spec
 
-The language-neutral contract for the three labs. Every language in this repo
+The language-neutral contract for the workshop. Every language in this repo
 implements exactly this. The Instruqt check and solve scripts in
 [`shared/instruqt/`](shared/instruqt/) drive and inspect Workflows through the
-`temporal` CLI only, so they work for every language **only if every name,
-payload and status string below matches exactly**.
+`temporal` CLI only, and [`shared/steps.sh`](shared/steps.sh) applies code by
+region name, so both work for every language **only if every page, region
+name, Workflow name, payload and status string below matches exactly**.
 
 When a port finds something here that its SDK cannot do, change this file
 first, then every language.
@@ -22,9 +23,63 @@ otherwise derive a different name (TypeScript function name, Java interface
 name, .NET and Python class name). Activity type names are not part of the
 contract: nothing outside the language's own tests refers to them.
 
-Each lab has starter code with `TODO` comments in `labN/` and the finished
-code in `solutionN/`. A lab is done when no `TODO` remains in the files that
-lab lists.
+## Pages
+
+Three labs, nine pages. Each page is one Instruqt challenge (15 minutes) that
+adds one concept, ends with a run the learner watches, and offers one
+"predict, then try" experiment.
+
+| Page | Challenge | Lab folder | Adds | Regions applied, in order |
+|---|---|---|---|---|
+| 1a | `first-workflow` | `lab1` | Activity, Workflow, Worker, client | `compose-greeting`; `activity-options` `execute-activity`; `register`; `start-workflow` |
+| 1b | `flaky-service` | `lab1` | A failing service, `MaximumAttempts: 2` | `flaky-service`; `activity-options` |
+| 1c | `retry-policy` | `lab1` | A full retry policy | `activity-options` |
+| 2a | `signal` | `lab2` | Wait for the `approve` Signal | `approve-signal`; `wait-for-approval` |
+| 2b | `query` | `lab2` | The `getStatus` Query | `get-status` |
+| 2c | `durable-timer` | `lab2` | A 30 second deadline, Worker stopped | `wait-for-approval` |
+| 3a | `non-retryable-error` | `lab3` | `InvalidAccount`, non-retryable | `invalid-account` |
+| 3b | `update` | `lab3` | Park in `RETRYING`, `updateToAccount` | `update-to-account`; `deposit`; `wait-for-handlers` |
+| 3c | `testing` | `lab3` | Two time-skipping tests | `test-timeout` `test-update` |
+
+### Snapshots and regions
+
+Each language folder has `steps/<snapshot>/`, a complete copy of one lab
+folder: `N-start` before the lab's first page, and one per page after it
+(`1a`, `1b`, ...). Learners work in `lab1`, `lab2`, `lab3`, which `reset`
+creates from the snapshots. Page `Nx` starts from the snapshot before it:
+`1a` from `1-start`, `1b` from `1a`. Lab 3's `3-start` is the finished Lab 2
+transfer, plus Lab 3's constants and starter.
+
+Code a page changes sits between markers in the language's line comment:
+
+```
+// region: activity-options
+...
+// endregion
+```
+
+- Regions do not nest. A region name may occur in several places and files
+  (a Python Query handler and the state it reads); `apply` replaces them all.
+- Every file whose imports change between pages has an `imports` region.
+  `apply` syncs it silently with whatever it applies to that file.
+- No region is ever empty. One that a later page fills holds the smallest
+  valid code: a comment, a placeholder `return`, `pass`, or a skipped test.
+- Every snapshot builds, and its tests (if any) pass or skip.
+- Assignments show each applied region's exact code, then a run block
+  `apply <region>...`. A drift test keeps the two in step.
+
+### The commands
+
+`shared/steps.sh` is language-neutral. Each language wraps it as
+`<lang>/bin/apply` and `<lang>/bin/reset`, on PATH in the sandbox.
+
+| Command | Does |
+|---|---|
+| `reset [page]` | Recreate the lab folder at the start of the page and make it the current page. Setup scripts run it |
+| `apply [page] <region>...` | Copy the named regions, plus `imports`, from the page's snapshot into the lab folder. Refuses, changing nothing, if markers do not line up |
+
+`apply` never restarts the Worker. It prints a reminder when it changed a
+non-test file.
 
 ---
 
@@ -38,32 +93,31 @@ lab lists.
 | Input | one string, the name. The starter passes `"Temporal"` |
 | Result | one string, `"Hello, <name>!"` |
 
-**Activity `ComposeGreeting(name) -> string`** simulates a flaky greeting
-service. It reads its own attempt number from the Activity info and:
+**Activity `ComposeGreeting(name) -> string`** returns `"Hello, <name>!"`.
+From page 1b it simulates a flaky greeting service, reading its own attempt
+number from the Activity info:
 
 - attempts 1 and 2: fails with a **retryable** application error, type
   `ServiceUnavailable`, message `greeting service unavailable (attempt N)`
 - attempt 3 onwards: returns `"Hello, <name>!"`
 
-The failure logic is shipped in the starter code. The learner writes the
-success path.
+**Activity options** (the `activity-options` region)
 
-**Activity options**
+| Page | StartToClose | Retry policy |
+|---|---|---|
+| 1a | 5 seconds | none set |
+| 1b | 5 seconds | maximum attempts 2 |
+| 1c | 5 seconds | initial interval 1 second, backoff 2.0, maximum attempts 5 |
 
-| Option | Value |
+The starter starts the Workflow, waits for the result and prints it.
+
+**Checks**, for runs started after the page began:
+
+| Page | Passes when |
 |---|---|
-| StartToClose timeout | 5 seconds |
-| Retry: initial interval | 1 second |
-| Retry: backoff coefficient | 2.0 |
-| Retry: maximum attempts | 5 |
-
-**Learner TODOs**: the Activity's success path; the Activity options and retry
-policy; executing the Activity from the Workflow; registering the Workflow and
-Activity on the Worker; starting the Workflow from the starter.
-
-**Check passes when**, for a run started after the challenge began: it
-completed, returned `Hello, Temporal!`, and its history has an
-`ActivityTaskStarted` event with `attempt == 3`.
+| 1a | A run completed with result `Hello, Temporal!` |
+| 1b | A run failed, with an `ActivityTaskStarted` event at `attempt == 2` |
+| 1c | A run completed with `Hello, Temporal!` and an `ActivityTaskStarted` at `attempt == 3` |
 
 ---
 
@@ -101,60 +155,64 @@ completed, returned `Hello, Temporal!`, and its history has an
 | Activity | Lab 2 | Lab 3 |
 |---|---|---|
 | `Withdraw` | Logs, succeeds | Same |
-| `Deposit` | Logs, succeeds | Fails **non-retryable**, error type `InvalidAccount`, when `account == "invalid-account"`. Otherwise succeeds |
+| `Deposit` | Logs, succeeds | From page 3a: fails **non-retryable**, error type `InvalidAccount`, when `account == "invalid-account"`. Otherwise succeeds |
 | `Refund` | Logs, succeeds | Same |
 
-Activity options are Lab 1's: 5 second StartToClose, retry 1s / 2.0 / 5
-attempts.
+Activity options: 5 second StartToClose, retry 1s / 2.0 / 5 attempts.
 
 **Message handlers**
 
-| Name | Kind | Payload | Returns | Lab |
+| Name | Kind | Payload | Returns | From page |
 |---|---|---|---|---|
-| `getStatus` | Query | none | `TransferStatus` | 2, 3 |
-| `approve` | Signal | `bool`, `true` approves | — | 2, 3 |
-| `updateToAccount` | Update | `string`, the corrected account | `TransferStatus` | 3 |
+| `approve` | Signal | `bool`, `true` approves | — | 2a |
+| `getStatus` | Query | none | `TransferStatus` | 2b |
+| `updateToAccount` | Update | `string`, the corrected account | `TransferStatus` | 3b |
 
-**Approval deadline**: 30 seconds, a named constant. Implemented as the SDK's
-wait-for-condition-with-timeout (`AwaitWithTimeout`, `condition(fn, '30s')`,
-`wait_condition(timeout=)`, `Workflow.await(Duration, ...)`,
-`WaitConditionAsync(fn, TimeSpan)`), which records a durable timer in history.
+**Approval deadline** (from page 2c): 30 seconds, a named constant.
+Implemented as the SDK's wait-for-condition-with-timeout (`AwaitWithTimeout`,
+`condition(fn, '30s')`, `wait_condition(timeout=)`,
+`Workflow.await(Duration, ...)`, `WaitConditionAsync(fn, TimeSpan)`), which
+records a durable timer in history. Page 2a waits with no deadline.
+
+**Starters** start the transfer and **exit**, so every other command runs in
+the same terminal. They replace a run that is still going (Workflow ID
+conflict policy *terminate existing*). Learners follow a transfer with
+`temporal workflow result --workflow-id money-transfer-workflow`.
 
 ### Lab 2: Human in the loop
 
 ```
 PENDING --Withdraw--> AWAITING_APPROVAL --+-- approve(true)  --Deposit--> APPROVED -> COMPLETED
                                            +-- approve(false) --Refund---> CANCELLED
-                                           +-- 30s timer      --Refund---> TIMED_OUT
+                                           +-- 30s timer      --Refund---> TIMED_OUT   (page 2c)
 ```
 
-Activities never fail in Lab 2, so every run is deterministic.
+`2-start` withdraws and deposits with no wait. Activities never fail in Lab
+2, so every run is deterministic. The starter transfers to `account-456`.
+Page 2c stops the Worker while the timer runs, then restarts it.
 
-The starter starts the Workflow and waits for its result. It sends nothing:
-the learner sends `approve` and queries `getStatus` from the CLI. The
-assignment includes stopping the Worker during the wait and restarting it.
+**Checks**, for runs started after the page began:
 
-**Learner TODOs**: the `getStatus` Query handler; the `approve` Signal
-handler; the wait-with-timeout and the three branches with their status
-updates.
-
-**Check passes when**, among runs started after the challenge began, there is
-at least one that completed with result `COMPLETED` and an `approve` Signal in
-its history, and at least one that completed with result `TIMED_OUT`, a
-`TimerFired` event and no Signal.
+| Page | Passes when |
+|---|---|
+| 2a | A run completed with `COMPLETED` and an `approve` Signal in its history |
+| 2b | As 2a, and a `getStatus` Query on that run, answered by the learner's running Worker, returns `COMPLETED` |
+| 2c | A run completed with `TIMED_OUT`, a `TimerFired` event and no Signal |
 
 ### Lab 3: Failure handling and testing
 
-Starts from the Lab 2 solution and changes the deposit step:
+Starts from the finished Lab 2 transfer and changes the deposit step:
 
 ```
 APPROVED --Deposit--> ok ---------------------------------------------> COMPLETED
-                   +-> InvalidAccount (non-retryable) --> RETRYING
+                   +-> InvalidAccount (non-retryable) --> RETRYING                     (page 3b)
                    |      updateToAccount(acct) --> retry Deposit with acct
                    +-> any other error, after retries --> FAILED, Workflow fails
 ```
 
-**`updateToAccount(acct)`**
+On page 3a there is no loop yet: the non-retryable error fails the Workflow.
+
+**`updateToAccount(acct)`** (page 3b)
 
 - **Validator** rejects, before anything reaches history, when the status is
   not `RETRYING`, or `acct` is empty, or `acct == "invalid-account"`.
@@ -164,19 +222,21 @@ APPROVED --Deposit--> ok ---------------------------------------------> COMPLETE
 - The Workflow waits for all handlers to finish before it returns.
 
 The starter starts a transfer to `invalid-account`, sends `approve(true)`
-after two seconds, and waits for the result. The learner queries the status,
-tries an invalid Update to see the validator reject it, then sends
+after two seconds, and exits. The learner queries the status, tries an
+invalid Update to see the validator reject it, then sends
 `updateToAccount("account-456")` from the CLI.
 
-**Tests**: the test file ships with its setup done. The learner writes:
+**Tests** (page 3c): the test file ships with its setup done and both tests
+skipped. Page 3c fills them:
 
-1. **Timeout path**: mocked `Withdraw` and `Refund`, no Signal, time skipped
-   past the deadline. Asserts the result is `TIMED_OUT` and `Refund` ran once.
-2. **Invalid account fixed by Update**: mocked `Deposit` fails with
-   `InvalidAccount` for `invalid-account` and succeeds for `account-456`.
-   The test sends `approve(true)`, then `updateToAccount("account-456")`.
-   Asserts the Update returned `COMPLETED` and the Workflow result is
-   `COMPLETED`.
+1. **Timeout path** (`test-timeout`): mocked `Withdraw` and `Refund`, no
+   Signal, time skipped past the deadline. Asserts the result is `TIMED_OUT`
+   and `Refund` ran once.
+2. **Invalid account fixed by Update** (`test-update`): mocked `Deposit` fails
+   with `InvalidAccount` for `invalid-account` and succeeds for
+   `account-456`. The test sends `approve(true)`, then
+   `updateToAccount("account-456")`. Asserts the Update returned `COMPLETED`
+   and the Workflow result is `COMPLETED`.
 
 | Language | Test framework | Environment for test 2 |
 |---|---|---|
@@ -189,11 +249,10 @@ tries an invalid Update to see the validator reject it, then sends
 Test 1 is time-skipped in every language. Test 2 may use the local dev-server
 test environment where the time-skipping server does not support Updates.
 
-**Learner TODOs**: the `InvalidAccount` non-retryable error in `Deposit`; the
-deposit loop that parks in `RETRYING`; the `updateToAccount` handler and
-validator; waiting for handlers before returning; the two tests.
+**Checks**, for runs started after the page began:
 
-**Check passes when** the tests pass with at least two test cases, and among
-runs started after the challenge began there is one that completed with
-result `COMPLETED`, a non-retryable `ActivityTaskFailed`, and an accepted and
-completed `updateToAccount` Update in its history.
+| Page | Passes when |
+|---|---|
+| 3a | A run failed with a non-retryable `ActivityTaskFailed` |
+| 3b | A run completed with `COMPLETED`, a non-retryable `ActivityTaskFailed`, and an accepted and completed `updateToAccount` Update |
+| 3c | Both tests run and pass: two passing test cases, none skipped |

@@ -1,0 +1,6 @@
+#!/bin/bash
+# ABOUTME: Page 1a cleanup. Stops every Worker and starter.
+# Everything lives in go/instruqt/lib-go.sh and shared/instruqt/lib.sh.
+. /root/workshop/shared/instruqt/lib.sh || { echo "FAIL: /root/workshop/shared/instruqt/lib.sh is missing. The sandbox clone is broken."; exit 1; }
+. /root/workshop/go/instruqt/lib-go.sh || { echo "FAIL: /root/workshop/go/instruqt/lib-go.sh is missing. The sandbox clone is broken."; exit 1; }
+page_cleanup

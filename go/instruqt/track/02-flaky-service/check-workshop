@@ -1,0 +1,6 @@
+#!/bin/bash
+# ABOUTME: Page 1b check. Passes when this page's run shows up in the Temporal history.
+# Everything lives in go/instruqt/lib-go.sh and shared/instruqt/lib.sh.
+. /root/workshop/shared/instruqt/lib.sh || { echo "FAIL: /root/workshop/shared/instruqt/lib.sh is missing. The sandbox clone is broken."; exit 1; }
+. /root/workshop/go/instruqt/lib-go.sh || { echo "FAIL: /root/workshop/go/instruqt/lib-go.sh is missing. The sandbox clone is broken."; exit 1; }
+page_check 1b

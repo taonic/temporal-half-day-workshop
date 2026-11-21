@@ -1,8 +1,0 @@
-#!/bin/bash
-# ABOUTME: Per-challenge cleanup. Stops the Worker and the starter.
-set -uo pipefail
-. /root/workshop/shared/instruqt/lib.sh || { echo "FAIL: /root/workshop/shared/instruqt/lib.sh is missing. The sandbox clone is broken."; exit 1; }
-. /root/workshop/go/instruqt/lib-go.sh || { echo "FAIL: /root/workshop/go/instruqt/lib-go.sh is missing. The sandbox clone is broken."; exit 1; }
-
-kill_go_processes
-echo "Lab 2 cleanup: OK"

@@ -1,0 +1,4 @@
+#!/bin/bash
+# ABOUTME: `apply` for the Go labs. See ../../shared/steps.sh.
+GO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+exec bash "$GO_ROOT/../shared/steps.sh" "$GO_ROOT" apply "$@"

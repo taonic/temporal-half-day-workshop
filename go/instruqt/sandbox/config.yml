@@ -3,9 +3,9 @@ slug: temporal-half-day-sandbox-go
 description: |-
   Go 1.24 sandbox for the Temporal Half-Day Workshop (Go) track.
 
-  scripts/setup-workshop installs git, Go and the Temporal CLI, clones the
-  workshop repo, warms the Go module and build caches, and starts the
-  Temporal dev server.
+  scripts/setup-workshop installs git, Go, the Temporal CLI and code-server,
+  clones the workshop repo, warms the Go module and build caches, and starts
+  the Temporal dev server and code-server.
 
   Pushed and published independently of the track:
     instruqt sandbox push
@@ -19,3 +19,4 @@ containers:
   # (target host connection failed) for ports that are not listed here.
   ports:
   - 8233   # Temporal Web UI
+  - 8080   # code-server, the Code Editor tab

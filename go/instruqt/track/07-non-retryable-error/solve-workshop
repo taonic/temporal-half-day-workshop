@@ -1,0 +1,6 @@
+#!/bin/bash
+# ABOUTME: Page 3a solve. Runs on Skip and on `instruqt track test`: finishes the code and plays the learner's part.
+# Everything lives in go/instruqt/lib-go.sh and shared/instruqt/lib.sh.
+. /root/workshop/shared/instruqt/lib.sh || { echo "FAIL: /root/workshop/shared/instruqt/lib.sh is missing. The sandbox clone is broken."; exit 1; }
+. /root/workshop/go/instruqt/lib-go.sh || { echo "FAIL: /root/workshop/go/instruqt/lib-go.sh is missing. The sandbox clone is broken."; exit 1; }
+page_solve 3a

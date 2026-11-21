@@ -1,17 +1,24 @@
 # Temporal Half-Day Workshop
 
-Three 30-minute hands-on labs for a four-hour Temporal workshop, in one repo
-per language. Each language also ships as its own Instruqt track.
+Three hands-on labs for a four-hour Temporal workshop, in one repo per
+language. Each lab is three short pages; each page adds one concept and ends
+with something you run and watch. Each language also ships as its own
+Instruqt track.
 
-| Lab | You build | Concepts |
+| Lab | Pages | You build |
 |---|---|---|
-| 1. Hello Temporal, with retries | A greeting Workflow whose Activity fails twice before it succeeds | Workflow, Activity, Worker, Task Queue, retry policy |
-| 2. Human in the loop | A money transfer that waits for approval or a 30-second deadline | Signal, Query, durable timer, Worker restart |
-| 3. Failure handling and testing | A bad account parks the transfer until an Update fixes it, plus tests | Non-retryable errors, Update with validator, time-skipping tests, mocks |
+| 1. Hello Temporal, with retries | 1a Workflow, Activity, Worker, client · 1b a flaky service · 1c a retry policy | A greeting that arrives although its service fails twice |
+| 2. Human in the loop | 2a Signal · 2b Query · 2c durable timer | A money transfer that waits for approval, or gives up after 30 seconds |
+| 3. Failure handling and testing | 3a non-retryable error · 3b Update · 3c time-skipping tests | A bad account parks the transfer until an Update fixes it, plus tests |
 
-Every language implements the same contract: [SPEC.md](SPEC.md). Same task
-queues, Workflow IDs, message names and status strings, so the Instruqt checks
-in [`shared/instruqt/`](shared/instruqt/) work for all of them.
+Nobody types or pastes code. Every page shows the code it adds, and one
+command, `apply <region>`, puts that code in place. Then you run it, and try
+one change of your own.
+
+Every language implements the same contract: [SPEC.md](SPEC.md). Same pages,
+region names, task queues, Workflow IDs, message names and status strings,
+so the Instruqt checks in [`shared/instruqt/`](shared/instruqt/) and the
+`apply` command in [`shared/steps.sh`](shared/steps.sh) work for all of them.
 
 | Language | Folder | Status |
 |---|---|---|
@@ -33,35 +40,27 @@ Start a dev server and leave it running. The Web UI is on
 temporal server start-dev
 ```
 
-Each lab folder has starter code with `TODO` comments and a `SOLUTION.md` with
-snippets to paste. The finished code is in the matching `solutionN/` folder.
 The step-by-step instructions are the Instruqt assignments, under
-`<language>/instruqt/track/*/assignment.md`.
+`<language>/instruqt/track/*/assignment.md`, one per page. Before each page,
+`reset <page>` puts the lab folder at the start of that page. Then follow the
+assignment: its `apply` commands fill in the code.
 
 ### Go
 
 ```bash
 cd go
+export PATH="$PWD/bin:$PATH"   # apply and reset
 
-# Lab 1
-go run ./lab1/worker        # terminal 1
-go run ./lab1/starter       # terminal 2
+reset 1a                       # creates lab1 at the start of page 1a
+apply compose-greeting         # ...and the rest of the page's apply commands
+go run ./lab1/worker           # terminal 1
+go run ./lab1/starter          # terminal 2
 
-# Lab 2: approve within 30 seconds, or let it time out
-go run ./lab2/worker
-go run ./lab2/starter
-temporal workflow query  --workflow-id money-transfer-workflow --name getStatus
-temporal workflow signal --workflow-id money-transfer-workflow --name approve --input true
-
-# Lab 3: the starter deposits to invalid-account; fix it with an Update
-go run ./lab3/worker
-go run ./lab3/starter
-temporal workflow update execute --workflow-id money-transfer-workflow \
-  --name updateToAccount --input '"account-456"'
-go test -v ./lab3
+reset 1b                       # next page
 ```
 
-Swap `labN` for `solutionN` to run the finished code.
+`reset` and `apply` take the page explicitly too: `apply 1c activity-options`.
+The finished code for every page is in [`go/steps/`](go/steps/).
 
 ## Instruqt
 

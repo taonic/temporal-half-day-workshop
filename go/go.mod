@@ -1,10 +1,17 @@
+// The Go packages live in lab1, lab2 and lab3, which `reset` creates from
+// steps/ (a separate module). With no lab folders, `go mod tidy` would drop
+// every requirement: restore 1c, 2c and 3c first (see ../shared/steps.sh).
 module github.com/taonic/temporal-half-day-workshop/go
 
 go 1.23.0
 
 toolchain go1.24.1
 
-require go.temporal.io/sdk v1.39.0
+require (
+	github.com/stretchr/testify v1.10.0
+	go.temporal.io/api v1.59.0
+	go.temporal.io/sdk v1.39.0
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -18,8 +25,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	github.com/stretchr/testify v1.10.0 // indirect
-	go.temporal.io/api v1.59.0 // indirect
 	golang.org/x/net v0.39.0 // indirect
 	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect

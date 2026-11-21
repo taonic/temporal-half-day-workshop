@@ -1,20 +1,19 @@
 slug: temporal-half-day-workshop-go
 id: 681pxqapr9ix
 title: Temporal Half-Day Workshop - Go
-teaser: Three 30-minute Go labs. Retries, Signals, Queries, a durable timer, an Update
+teaser: Nine short Go pages. Retries, Signals, Queries, a durable timer, an Update
   and tests that skip time.
 description: |-
-  A hands-on Temporal workshop in Go. Every challenge hands you a package
-  with a few TODOs and a Temporal dev server that is already running.
+  A hands-on Temporal workshop in Go, in nine short pages. Each page adds one
+  idea, shows you the code, and puts it in the editor with one click. Then
+  you run it, watch what happens, and try one change of your own.
 
   Start with a greeting that only arrives because Temporal retried a flaky
-  Activity. Then build a money transfer that waits for a human to approve
-  it, gives up after a deadline, and answers questions about its state.
-  Finish by making a bad account number park the transfer until someone
-  fixes it with an Update, and prove it all with tests that skip time.
-
-  The Solution tab has the finished code for every lab, and SOLUTION.md has
-  snippets to paste. Copying is allowed: the point is to watch it run.
+  Activity. Then build a money transfer that waits for a person to approve
+  it, answers questions about its state, and gives up after a deadline even
+  while no Worker is running. Finish by making a bad account number park
+  the transfer until someone fixes it with an Update, and prove it all with
+  tests that skip time.
 icon: ""
 tags:
 - golang
