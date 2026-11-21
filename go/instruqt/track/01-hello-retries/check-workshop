@@ -1,0 +1,15 @@
+#!/bin/bash
+# ABOUTME: Check script for Lab 1.
+# Gate 1: every TODO in the lab files is gone.
+# Gate 2: the package compiles.
+# Gate 3: greeting-workflow completed since this lab started, returned the
+#         greeting, and needed three Activity attempts to do it.
+. /root/workshop/shared/instruqt/lib.sh || { echo "FAIL: /root/workshop/shared/instruqt/lib.sh is missing. The sandbox clone is broken."; exit 1; }
+. /root/workshop/go/instruqt/lib-go.sh || { echo "FAIL: /root/workshop/go/instruqt/lib-go.sh is missing. The sandbox clone is broken."; exit 1; }
+cd "$GO_DIR" || fail "Workshop directory is missing."
+
+require_no_todos lab1 activities.go workflow.go worker/main.go starter/main.go
+go_build_gate lab1
+require_code lab1/workflow.go "RetryPolicy" "lab1/workflow.go has no RetryPolicy. Add one to the ActivityOptions."
+pass "Retry policy configured"
+check_lab1_runtime "$(since 01)"

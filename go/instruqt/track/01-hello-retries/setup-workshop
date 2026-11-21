@@ -1,0 +1,13 @@
+#!/bin/bash
+# ABOUTME: Per-challenge setup. Clears stragglers from the previous lab and
+# stamps the time this lab started, so the check counts only this lab's runs.
+# The whole repo is cloned once by the sandbox preset. Nothing is staged here.
+set -uo pipefail
+. /root/workshop/shared/instruqt/lib.sh || { echo "FAIL: /root/workshop/shared/instruqt/lib.sh is missing. The sandbox clone is broken."; exit 1; }
+. /root/workshop/go/instruqt/lib-go.sh || { echo "FAIL: /root/workshop/go/instruqt/lib-go.sh is missing. The sandbox clone is broken."; exit 1; }
+
+kill_go_processes
+terminate_workshop_workflows "Lab 1 setup"
+stamp_start 01
+
+echo "Lab 1 ready."

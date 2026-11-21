@@ -1,0 +1,21 @@
+name: Temporal Half-Day Workshop Sandbox - Go
+slug: temporal-half-day-sandbox-go
+description: |-
+  Go 1.24 sandbox for the Temporal Half-Day Workshop (Go) track.
+
+  scripts/setup-workshop installs git, Go and the Temporal CLI, clones the
+  workshop repo, warms the Go module and build caches, and starts the
+  Temporal dev server.
+
+  Pushed and published independently of the track:
+    instruqt sandbox push
+    instruqt sandbox publish --message="..."
+containers:
+- name: workshop
+  image: ubuntu:24.04
+  shell: /bin/bash
+  memory: 4096
+  # Every port a challenge tab points at. Instruqt's proxy returns HTTP 572
+  # (target host connection failed) for ports that are not listed here.
+  ports:
+  - 8233   # Temporal Web UI
