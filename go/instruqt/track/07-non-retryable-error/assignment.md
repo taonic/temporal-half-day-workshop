@@ -1,5 +1,6 @@
 ---
 slug: non-retryable-error
+id: mj6giuuc3wtj
 type: challenge
 title: '3a: An Error Not Worth Retrying'
 teaser: A bad account number fails the deposit for good, at once.
@@ -14,20 +15,24 @@ notes:
     Mark that error **non-retryable**, and Temporal hands it to the
     Workflow at once.
 tabs:
-- title: Code Editor
+- id: 95fznujtxu14
+  title: Code Editor
   type: service
   hostname: workshop
   path: /?folder=/root/workshop/go/lab3
   port: 8080
-- title: Worker
+- id: 02aeggkrz0vt
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: vnbavvgftqwy
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: 2fbspckisex0
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /

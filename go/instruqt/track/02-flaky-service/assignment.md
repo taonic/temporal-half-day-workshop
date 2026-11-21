@@ -1,5 +1,6 @@
 ---
 slug: flaky-service
+id: tqigto8xa3vp
 type: challenge
 title: '1b: A Flaky Service'
 teaser: The greeting service starts failing. See what a strict retry policy does.
@@ -14,20 +15,24 @@ notes:
     makes the greeting service fail, and gives the Activity too few
     attempts to get through.
 tabs:
-- title: Code Editor
+- id: ypbhqorrelmg
+  title: Code Editor
   type: service
   hostname: workshop
   path: /?folder=/root/workshop/go/lab1
   port: 8080
-- title: Worker
+- id: wprzjya7q276
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: ymumvyc0vjgp
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: zx1vg7nn53ad
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /

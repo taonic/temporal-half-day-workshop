@@ -1,23 +1,28 @@
 ---
 slug: query
+id: ayhvd51iwh5t
 type: challenge
 title: '2b: Ask It With a Query'
 teaser: Ask the waiting transfer where it is, without changing anything.
 tabs:
-- title: Code Editor
+- id: 0x5bha8s1kvj
+  title: Code Editor
   type: service
   hostname: workshop
   path: /?folder=/root/workshop/go/lab2
   port: 8080
-- title: Worker
+- id: xxz3r5cqr6gs
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: 2nt3dq2fzdui
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: vyxctxcqvtse
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /

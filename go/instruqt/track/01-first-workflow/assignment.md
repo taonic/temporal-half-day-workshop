@@ -1,5 +1,6 @@
 ---
 slug: first-workflow
+id: cbc1oyt2tly3
 type: challenge
 title: '1a: Your First Workflow'
 teaser: An Activity, a Workflow, a Worker and a client. Four small pieces, one greeting.
@@ -26,20 +27,24 @@ notes:
     Then you run it, watch what happens, and try one change of your own.
     Each page starts from working code, so experiment freely.
 tabs:
-- title: Code Editor
+- id: nsealajrrlbv
+  title: Code Editor
   type: service
   hostname: workshop
   path: /?folder=/root/workshop/go/lab1
   port: 8080
-- title: Worker
+- id: ctes9ulx0klq
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: jbnirvh5djnr
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: p37x7vqadxw9
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /

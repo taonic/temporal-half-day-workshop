@@ -1,5 +1,6 @@
 ---
 slug: update
+id: g1llojdaa0h4
 type: challenge
 title: '3b: Fix It With an Update'
 teaser: The transfer parks on the bad account until a person sends the right one.
@@ -16,20 +17,24 @@ notes:
 
     Fixing a bank account deserves a reply, so this page uses an Update.
 tabs:
-- title: Code Editor
+- id: enmrbvrt23mh
+  title: Code Editor
   type: service
   hostname: workshop
   path: /?folder=/root/workshop/go/lab3
   port: 8080
-- title: Worker
+- id: 63tf5xz6eytn
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: vhiokekoskzb
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: gqlmevt93ngp
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /

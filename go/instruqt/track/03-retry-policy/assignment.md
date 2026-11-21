@@ -1,23 +1,28 @@
 ---
 slug: retry-policy
+id: 84wwvbsnkisa
 type: challenge
 title: '1c: A Retry Policy That Works'
 teaser: Give the Activity enough attempts, with backoff, and the greeting gets through.
 tabs:
-- title: Code Editor
+- id: vdjnu0vv5m4a
+  title: Code Editor
   type: service
   hostname: workshop
   path: /?folder=/root/workshop/go/lab1
   port: 8080
-- title: Worker
+- id: wuekkkusn0jz
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: nla08i6aiw4a
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: c6hgn326qdxv
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /

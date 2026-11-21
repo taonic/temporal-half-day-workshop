@@ -1,23 +1,28 @@
 ---
 slug: testing
+id: itege0emqz8q
 type: challenge
 title: '3c: Test It, Skipping Time'
 teaser: Test the 30-second timeout and the Update fix in milliseconds, with no server.
 tabs:
-- title: Code Editor
+- id: u767dzxsrco9
+  title: Code Editor
   type: service
   hostname: workshop
   path: /?folder=/root/workshop/go/lab3
   port: 8080
-- title: Worker
+- id: ebkwylwehm26
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: ulcfyjdgjlij
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: cgnvvhylwbxj
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /

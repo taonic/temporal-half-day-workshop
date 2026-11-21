@@ -1,8 +1,10 @@
 ---
 slug: signal
+id: qkx1l1tzkh0u
 type: challenge
 title: '2a: Wait for a Signal'
-teaser: A money transfer that waits, as long as it takes, for a person to approve it.
+teaser: A money transfer that waits, as long as it takes, for a person to approve
+  it.
 notes:
 - type: text
   contents: |-
@@ -24,20 +26,24 @@ notes:
     **Timer** (page 2c): wait a set time, kept by the server. It fires even
     when every Worker is down.
 tabs:
-- title: Code Editor
+- id: wwixaxfa8wcb
+  title: Code Editor
   type: service
   hostname: workshop
   path: /?folder=/root/workshop/go/lab2
   port: 8080
-- title: Worker
+- id: qskv8vphodov
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: hxqs1hbjtv7h
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: ygykhnxwhdcj
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /

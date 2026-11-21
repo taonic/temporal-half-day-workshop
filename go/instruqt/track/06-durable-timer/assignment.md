@@ -1,23 +1,28 @@
 ---
 slug: durable-timer
+id: ld976wz1x8ki
 type: challenge
 title: '2c: A Durable Timer'
 teaser: Give up after 30 seconds, even while no Worker is running.
 tabs:
-- title: Code Editor
+- id: lykcphvlogty
+  title: Code Editor
   type: service
   hostname: workshop
   path: /?folder=/root/workshop/go/lab2
   port: 8080
-- title: Worker
+- id: ot5vivy6xtey
+  title: Worker
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Terminal
+- id: k4vrywqunsxe
+  title: Terminal
   type: terminal
   hostname: workshop
   workdir: /root/workshop/go
-- title: Temporal UI
+- id: 5okry8rtogu0
+  title: Temporal UI
   type: service
   hostname: workshop
   path: /
